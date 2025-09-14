@@ -1,0 +1,31 @@
+digraph AttackTree {
+  rankdir=TB;
+  labelloc=top;
+  label="Attack Tree – SmartHome One-Lock";
+
+  node [shape=box, style="rounded,filled", fillcolor=white, fontname="Helvetica"];
+  edge [fontname="Helvetica"];
+
+  R0       [label="R0: Security incident (OR)"];
+  N_UNLOCK [label="Unauthorized access (unlock)\n(OR)"];
+  N_DOS    [label="Denial of unlock (DoS)\n(OR)"];
+  N_PRIVACY[label="Privacy breach (entry logs)\n(OR)"];
+  N_DDOS   [label="Smart lock used for DDoS\n(OR)"];
+
+  L_T1  [label="T1: Cloud credential stuffing\nI=9  p=0.10",  shape=note];
+  L_T2  [label="T2: BLE relay\nI=8  p=0.10",                 shape=note];
+  L_T4  [label="T4: Physical bump/shim\nI=7  p=0.10",        shape=note];
+  L_T8  [label="T8: BLE jamming\nI=6  p=0.10",               shape=note];
+  L_T9  [label="T9: Battery drain/motor jam\nI=7  p=0.05",   shape=note];
+  L_T10 [label="T10: Cloud/API outage\nI=5  p=0.10",         shape=note];
+  L_T11 [label="T11: Cloud logs breach\nI=6  p=0.08",        shape=note];
+  L_T12 [label="T12: Local log extraction\nI=5  p=0.10",     shape=note];
+  L_T13 [label="T13: Malware on lock floods\nI=6  p=0.03",   shape=note];
+  L_T14 [label="T14: Cloud command abuse\nI=5  p=0.07",      shape=note];
+
+  R0 -> {N_UNLOCK N_DOS N_PRIVACY N_DDOS};
+  N_UNLOCK  -> {L_T1 L_T2 L_T4};
+  N_DOS     -> {L_T8 L_T9 L_T10};
+  N_PRIVACY -> {L_T11 L_T12};
+  N_DDOS    -> {L_T13 L_T14};
+}

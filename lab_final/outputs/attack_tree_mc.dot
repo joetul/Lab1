@@ -1,0 +1,31 @@
+digraph AttackTreeMC {
+  rankdir=LR;
+  labelloc=top;
+  label="Attack Tree (10k Monte Carlo)";
+  graph [ordering="out"];
+  nodesep=0.4; ranksep=0.6;
+  node [shape=box, style="rounded,filled", fillcolor=white, fontname="Helvetica"];
+  edge [fontname="Helvetica"];
+  R0 [label="R0: Security incident (any)\n(OR)  p_mc≈41.5%", tooltip="Security incident (any)"];
+  N_UNLOCK [label="N_UNLOCK: Unauthorized access (unlock)\n(OR)  p_mc≈34.0%", tooltip="Unauthorized access (unlock)"];
+  N_CLOUD_TAKEOVER [label="N_CLOUD_TAKEOVER: Cloud/mobile account takeover\n(OR)  p_mc≈22.9%", tooltip="Cloud/mobile account takeover"];
+  N_PROX [label="N_PROX: Proximity/BLE path\n(OR)  p_mc≈9.6%", tooltip="Proximity/BLE path"];
+  N_PHYSICAL [label="N_PHYSICAL: Physical bypass\n(OR)  p_mc≈5.2%", tooltip="Physical bypass"];
+  N_DENY [label="N_DENY: Deny unlocking (DoS)\n(OR)  p_mc≈8.6%", tooltip="Deny unlocking (DoS)"];
+  N_LOGS [label="N_LOGS: Log exposure\n(OR)  p_mc≈3.2%", tooltip="Log exposure"];
+  L_T1 [label="L_T1: Breached-password reuse / stuffing → ATO\nD=7.8  p_in=12%  p_mc≈11.8%", shape=note, tooltip="Breached-password reuse / stuffing → ATO"];
+  L_T2 [label="L_T2: Phishing portal → credential theft\nD=7.0  p_in=8%  p_mc≈7.8%", shape=note, tooltip="Phishing portal → credential theft"];
+  L_T3 [label="L_T3: MFA fatigue (push-bomb) → approval\nD=7.0  p_in=5%  p_mc≈5.1%", shape=note, tooltip="MFA fatigue (push-bomb) → approval"];
+  L_T4 [label="L_T4: Proximity relay (BLE presence from curb)\nD=6.8  p_in=10%  p_mc≈9.6%", shape=note, tooltip="Proximity relay (BLE presence from curb)"];
+  L_T5 [label="L_T5: BLE jamming blocks unlock\nD=6.8  p_in=5%  p_mc≈4.8%", shape=note, tooltip="BLE jamming blocks unlock"];
+  L_T6 [label="L_T6: Cloud/API outage denies remote unlock\nD=6.6  p_in=4%  p_mc≈4.0%", shape=note, tooltip="Cloud/API outage denies remote unlock"];
+  L_T7 [label="L_T7: Physical bypass (lockpicking/force)\nD=5.6  p_in=5%  p_mc≈5.2%", shape=note, tooltip="Physical bypass (lockpicking/force)"];
+  L_T8 [label="L_T8: Log exposure (cloud/local)\nD=5.8  p_in=3%  p_mc≈3.2%", shape=note, tooltip="Log exposure (cloud/local)"];
+  R0 -> { N_UNLOCK N_DENY N_LOGS };
+  N_UNLOCK -> { N_CLOUD_TAKEOVER N_PROX N_PHYSICAL };
+  N_CLOUD_TAKEOVER -> { L_T1 L_T2 L_T3 };
+  N_PROX -> { L_T4 };
+  N_PHYSICAL -> { L_T7 };
+  N_DENY -> { L_T5 L_T6 };
+  N_LOGS -> { L_T8 };
+}

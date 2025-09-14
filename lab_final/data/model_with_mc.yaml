@@ -1,0 +1,172 @@
+threats:
+- id: T1
+  title: "Breached-password reuse / stuffing \u2192 ATO"
+  affects:
+  - A4
+  - A5
+  likelihood: 0.12
+  dread:
+    damage: 9
+    reproducibility: 8
+    exploitability: 8
+    affected_users: 7
+    discoverability: 7
+- id: T2
+  title: "Phishing portal \u2192 credential theft"
+  affects:
+  - A4
+  - A5
+  likelihood: 0.08
+  dread:
+    damage: 8
+    reproducibility: 7
+    exploitability: 7
+    affected_users: 6
+    discoverability: 7
+- id: T3
+  title: "MFA fatigue (push-bomb) \u2192 approval"
+  affects:
+  - A4
+  - A5
+  likelihood: 0.05
+  dread:
+    damage: 9
+    reproducibility: 7
+    exploitability: 6
+    affected_users: 6
+    discoverability: 7
+- id: T4
+  title: Proximity relay (BLE presence from curb)
+  affects:
+  - A6
+  - A1
+  likelihood: 0.1
+  dread:
+    damage: 9
+    reproducibility: 7
+    exploitability: 7
+    affected_users: 5
+    discoverability: 6
+- id: T5
+  title: BLE jamming blocks unlock
+  affects:
+  - A6
+  - A1
+  likelihood: 0.05
+  dread:
+    damage: 6
+    reproducibility: 8
+    exploitability: 7
+    affected_users: 6
+    discoverability: 7
+- id: T6
+  title: Cloud/API outage denies remote unlock
+  affects:
+  - A4
+  - A5
+  likelihood: 0.04
+  dread:
+    damage: 6
+    reproducibility: 8
+    exploitability: 5
+    affected_users: 6
+    discoverability: 8
+- id: T7
+  title: Physical bypass (lockpicking/force)
+  affects:
+  - A6
+  likelihood: 0.05
+  dread:
+    damage: 9
+    reproducibility: 5
+    exploitability: 5
+    affected_users: 5
+    discoverability: 4
+- id: T8
+  title: Log exposure (cloud/local)
+  affects:
+  - A4
+  - A6
+  likelihood: 0.03
+  dread:
+    damage: 6
+    reproducibility: 6
+    exploitability: 6
+    affected_users: 5
+    discoverability: 6
+tree:
+  nodes:
+  - id: R0
+    name: Security incident (any)
+    type: OR
+    children:
+    - N_UNLOCK
+    - N_DENY
+    - N_LOGS
+    p_mc: 0.415
+  - id: N_UNLOCK
+    name: Unauthorized access (unlock)
+    type: OR
+    children:
+    - N_CLOUD_TAKEOVER
+    - N_PROX
+    - N_PHYSICAL
+    p_mc: 0.34
+  - id: N_CLOUD_TAKEOVER
+    name: Cloud/mobile account takeover
+    type: OR
+    children:
+    - L_T1
+    - L_T2
+    - L_T3
+    p_mc: 0.2287
+  - id: N_PROX
+    name: Proximity/BLE path
+    type: OR
+    children:
+    - L_T4
+    p_mc: 0.0962
+  - id: N_PHYSICAL
+    name: Physical bypass
+    type: OR
+    children:
+    - L_T7
+    p_mc: 0.052
+  - id: N_DENY
+    name: Deny unlocking (DoS)
+    type: OR
+    children:
+    - L_T5
+    - L_T6
+    p_mc: 0.0858
+  - id: N_LOGS
+    name: Log exposure
+    type: OR
+    children:
+    - L_T8
+    p_mc: 0.0318
+  leaves:
+  - id: L_T1
+    threat_id: T1
+    p_mc: 0.1183
+  - id: L_T2
+    threat_id: T2
+    p_mc: 0.0775
+  - id: L_T3
+    threat_id: T3
+    p_mc: 0.051
+  - id: L_T4
+    threat_id: T4
+    p_mc: 0.0962
+  - id: L_T5
+    threat_id: T5
+    p_mc: 0.0483
+  - id: L_T6
+    threat_id: T6
+    p_mc: 0.0396
+  - id: L_T7
+    threat_id: T7
+    p_mc: 0.052
+  - id: L_T8
+    threat_id: T8
+    p_mc: 0.0318
