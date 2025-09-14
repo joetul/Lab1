@@ -261,8 +261,7 @@ def main():
     args = parser.parse_args()
 
     script_dir = Path(__file__).resolve().parent
-    root = script_dir  # save relative to the script’s folder
-
+    root = script_dir.parent
 
     # Resolve model path: CLI > default > prompt
     model_path = Path(args.model).expanduser() if args.model else (root / "data" / "model.yaml")
