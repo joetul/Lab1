@@ -85,7 +85,8 @@ def write_csv(rows, path: Path):
 
 def write_json(obj, path: Path):
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(obj, indent=2))
+    # ensure_ascii=False lets non-ASCII stay readable; safe on UTF-8 files
+    path.write_text(json.dumps(obj, indent=2, ensure_ascii=False), encoding="utf-8")
 
 
 def esc(s: str) -> str:
@@ -204,7 +205,6 @@ def mc_root_summary(model, threats, trials=TRIALS, seed=SEED):
 
 
 # DOT rendering
-
 def write_mc_dot(model, threats, node_probs, leaf_probs, dot_out: Path):
     tree = get_tree(model)
     nodes = {n["id"]: n for n in tree["nodes"]}
@@ -212,22 +212,20 @@ def write_mc_dot(model, threats, node_probs, leaf_probs, dot_out: Path):
 
     lines = []
     lines.append('digraph AttackTreeMC {')
-    lines.append('  rankdir=LR;')                # left->right
+    lines.append('  rankdir=LR;')
     lines.append('  labelloc=top;')
     lines.append('  label="Attack Tree (10k Monte Carlo)";')
-    lines.append('  graph [ordering="out"];')    # keep children order
-    lines.append('  nodesep=0.4; ranksep=0.6;')  # spacing
+    lines.append('  graph [ordering="out"];')
+    lines.append('  nodesep=0.4; ranksep=0.6;')
     lines.append('  node [shape=box, style="rounded,filled", fillcolor=white, fontname="Helvetica"];')
     lines.append('  edge [fontname="Helvetica"];')
 
-    # Nodes
     for nid, n in nodes.items():
         node_type = str(n.get("type", "OR")).upper()
         name = n.get("name", nid)
         p = node_probs[nid] * 100
         lines.append(f'  {nid} [label="{esc(nid)}: {esc(name)}\\n({node_type})  p_mc≈{p:.1f}%", tooltip="{esc(name)}"];')
 
-    # Leaves
     for lid, l in leaves.items():
         t = threats[l["threat_id"]]
         title = t.get("title", l["threat_id"])
@@ -238,7 +236,6 @@ def write_mc_dot(model, threats, node_probs, leaf_probs, dot_out: Path):
             f'  {lid} [label="{esc(lid)}: {esc(title)}\\nD={d_avg:.1f}  p_in={p_in:.0f}%  p_mc≈{p_mc:.1f}%", shape=note, tooltip="{esc(title)}"];'
         )
 
-    # Edges
     for n in tree["nodes"]:
         children = n.get("children", [])
         if children:
@@ -246,7 +243,7 @@ def write_mc_dot(model, threats, node_probs, leaf_probs, dot_out: Path):
 
     lines.append('}')
     dot_out.parent.mkdir(parents=True, exist_ok=True)
-    dot_out.write_text("\n".join(lines))
+    dot_out.write_text("\n".join(lines), encoding="utf-8")  # ← key change
 
 
 def render_png(dot_path: Path, png_out: Path):
